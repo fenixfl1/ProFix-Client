@@ -67,7 +67,7 @@ const StaffProfile: React.FC = () => {
       span: 2,
     },
     {
-      key: "USER_ID",
+      key: "user_id",
       label: "Código",
       children: user.user_id,
     },
@@ -81,7 +81,7 @@ const StaffProfile: React.FC = () => {
       ),
     },
     {
-      key: "USERNAME",
+      key: "username",
       label: "Usuario",
       children: `@${user.username}`,
     },

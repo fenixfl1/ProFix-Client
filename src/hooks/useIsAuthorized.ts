@@ -1,4 +1,4 @@
-import useMenuOptionStore from "@/stores/useMenuOptionStore"
+// import useMenuOptionStore from "@/stores/useMenuOptionStore"
 
 /**
  * @description This hook is used to check if the user is authorized to perform an action
@@ -6,7 +6,9 @@ import useMenuOptionStore from "@/stores/useMenuOptionStore"
  * @returns {boolean} - Returns true if the user is authorized to perform the action
  */
 export default function useIsAuthorized(operationId: number | string): boolean {
-  const { selectedMenuOption } = useMenuOptionStore()
+  const { selectedMenuOption } = {
+    selectedMenuOption: { operations: new Array<number>() },
+  }
   const { operations } = selectedMenuOption ?? { operations: [] }
 
   return operations?.includes(Number(operationId))

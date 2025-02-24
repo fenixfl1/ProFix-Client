@@ -18,7 +18,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   useEffect(() => {
     if (!isLoggedIn()) return
     const ws = new WebSocket(
-      `${SOCKET_NOTIFICATION_URL}/${getSessionInfo().USERNAME}/`
+      `${SOCKET_NOTIFICATION_URL}/${getSessionInfo().username}/`
     )
 
     ws.onopen = () => {

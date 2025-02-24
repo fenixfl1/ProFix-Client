@@ -13,7 +13,7 @@ export interface Task {
   CREATED_BY: string
   UPDATED_BY?: string
   TAGS: Tag[]
-  ASSIGNED_USERS: Pick<User, "AVATAR" | "FULL_NAME" | "USERNAME">[]
+  ASSIGNED_USERS: Pick<User, "avatar" | "full_name" | "username">[]
   COMPLETED: boolean
 }
 

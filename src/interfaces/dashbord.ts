@@ -7,7 +7,7 @@ interface Activity {
   OBJECT_REPR: string
   ACTION_FLAG: number
   CHANGE_MESSAGE: string
-  USERNAME: string
+  username: string
   CONTENT_TYPE: number
 }
 

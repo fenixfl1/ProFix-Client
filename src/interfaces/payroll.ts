@@ -18,7 +18,7 @@ export interface Payroll {
 
 export interface PayrollEntry {
   AFP: number
-  AVATAR?: string
+  avatar?: string
   BONUS: number
   CREATED_AT: string
   CREATED_BY: string
@@ -26,7 +26,7 @@ export interface PayrollEntry {
   DEDUCTIONS: number
   DESC_STATUS: string
   DISCOUNT: number
-  FULL_NAME: string
+  full_name: string
   ISR: number
   NET_SALARY: number
   PAYROLL: number
@@ -56,7 +56,7 @@ export interface Adjustment {
   STATE: string
   TYPE: "B" | "D"
   USER: string
-  USERNAME: string
+  username: string
 }
 
 export interface Deduction {

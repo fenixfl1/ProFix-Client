@@ -1,12 +1,12 @@
 import { Metadata } from "@/services/interfaces"
 import { TablePaginationConfig } from "antd"
 
-function makePagination(metadata: Metadata): TablePaginationConfig {
+function makePagination({ pagination }: Metadata): TablePaginationConfig {
   return {
     showSizeChanger: true,
-    pageSize: metadata?.page_size,
-    total: metadata?.total,
-    current: metadata?.page,
+    pageSize: pagination?.pageSize,
+    total: pagination?.totalPages,
+    current: pagination?.currentPage,
   }
 }
 

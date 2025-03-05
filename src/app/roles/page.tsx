@@ -12,6 +12,9 @@ import React, { useCallback, useEffect, useState } from "react"
 import RolesTable from "./components/RolesTable"
 import ConditionalComponent from "@/components/ConditionalComponent"
 import RolesForm from "./components/RolesForm"
+import { useGetOneRoleMutation } from "@/services/hooks/roles/useGetOneRoleMutation"
+import errorHandler from "@/helpers/errorHandler"
+import { useUpdateRoleMutation } from "@/services/hooks/roles/useUpdateRoleMutation"
 
 const page: React.FC = () => {
   const [form] = Form.useForm()
@@ -23,6 +26,10 @@ const page: React.FC = () => {
 
   const { mutate: getRolesList, isPending: isGetPending } =
     useGetRoleListMutation()
+  const { mutateAsync: getRole, isPending: isGetRolePending } =
+    useGetOneRoleMutation()
+  const { mutateAsync: updateRole, isPending: isUpdatePending } =
+    useUpdateRoleMutation()
 
   const {
     metadata: { pagination },
@@ -59,12 +66,30 @@ const page: React.FC = () => {
   const toggleFormModal = () => setFormModalState((prev) => !prev)
 
   const handleOnEdit = async (record: Roles) => {
-    form.setFieldsValue({ ...record })
-    toggleFormModal()
+    try {
+      await getRole(record.role_id)
+      toggleFormModal()
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
+  const handleOnUpdate = async (record: Roles) => {
+    try {
+      await updateRole({
+        role_id: record.role_id,
+        menu_options: record.menu_options as string[],
+        state: record.state === "A" ? "I" : "A",
+      })
+
+      setShouldUpdate((prev) => !prev)
+    } catch (error) {
+      errorHandler(error)
+    }
   }
 
   return (
-    <CustomSpin spinning={isGetPending}>
+    <CustomSpin spinning={isGetPending || isGetRolePending || isUpdatePending}>
       <TitleBar
         form={form}
         createText="Nuevo Rol"
@@ -74,7 +99,11 @@ const page: React.FC = () => {
           toggleFormModal()
         }}
       />
-      <RolesTable onChange={handleOnSearch} onEdit={handleOnEdit} />
+      <RolesTable
+        onChange={handleOnSearch}
+        onEdit={handleOnEdit}
+        onUpdate={handleOnUpdate}
+      />
 
       <ConditionalComponent condition={formModalState}>
         <RolesForm

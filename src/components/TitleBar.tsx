@@ -61,7 +61,7 @@ const TitleBar: React.FC<TitleBarProps> = ({
             </CustomPopover>
           </CustomTooltip>
         </ConditionalComponent>
-        <CustomCol xs={14}>
+        <CustomCol xs={15}>
           <CustomRow justify={"space-between"} style={{ flexWrap: "nowrap" }}>
             <CustomSearch
               width={"80%"}

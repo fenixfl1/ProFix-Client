@@ -6,6 +6,7 @@ import {
   CustomTable,
   CustomTooltip,
 } from "@/components/custom"
+import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
 import { Roles } from "@/interfaces/user"
 import { useRolesStore } from "@/stores/roles.store"
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
@@ -15,13 +16,26 @@ import React from "react"
 interface RolesTableProps {
   onChange: (current?: number, size?: number) => void
   onEdit: (record: Roles) => void
+  onUpdate: (record: Roles) => void
 }
 
-const RolesTable: React.FC<RolesTableProps> = () => {
+const RolesTable: React.FC<RolesTableProps> = ({
+  onEdit,
+  onChange,
+  onUpdate,
+}) => {
   const {
     roles,
     metadata: { pagination },
   } = useRolesStore()
+
+  const handleOnUpdate = async (record: Roles) => {
+    CustomModalConfirmation({
+      title: "Confirmación",
+      content: `¿Desea ${record.state === "A" ? "inhabilitar" : "habilitar"} el rol ${record.name}?`,
+      onOk: () => onUpdate(record),
+    })
+  }
 
   const columns: ColumnType<Roles>[] = [
     {
@@ -52,7 +66,7 @@ const RolesTable: React.FC<RolesTableProps> = () => {
       title: "Acciones",
       width: "8%",
       align: "center",
-      render: () => (
+      render: (_, record) => (
         <CustomSpace
           direction={"horizontal"}
           split={<CustomDivider type={"vertical"} />}
@@ -61,11 +75,16 @@ const RolesTable: React.FC<RolesTableProps> = () => {
             <CustomButton
               type={"link"}
               icon={<EditOutlined />}
-              onClick={() => {}}
+              onClick={() => onEdit(record)}
             />
           </CustomTooltip>
           <CustomTooltip title={"Inhabilitar"}>
-            <CustomButton type={"link"} danger icon={<DeleteOutlined />} />
+            <CustomButton
+              type={"link"}
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => handleOnUpdate(record)}
+            />
           </CustomTooltip>
         </CustomSpace>
       ),

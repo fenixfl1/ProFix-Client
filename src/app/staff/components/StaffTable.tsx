@@ -6,6 +6,7 @@ import {
   CustomAvatar,
   CustomButton,
   CustomCol,
+  CustomDivider,
   CustomList,
   CustomListItem,
   CustomSpace,
@@ -99,7 +100,10 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
       key: "Acciones",
       title: "Acciones",
       render: (_, record) => (
-        <CustomSpace direction={"horizontal"}>
+        <CustomSpace
+          direction={"horizontal"}
+          split={<CustomDivider type={"vertical"} />}
+        >
           <CustomTooltip title="Editar">
             <CustomButton
               onClick={() => onEdit(record)}

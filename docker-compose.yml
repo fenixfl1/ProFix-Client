@@ -1,0 +1,16 @@
+services:
+  nextjs:
+    container_name: ProFix-client
+    build: .
+    ports:
+      - "3003:3003"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_WEB_API_URL=http://localhost:3000
+    env_file:
+      - .env.production
+    command: npm start

@@ -11,7 +11,7 @@ import {
   CustomTitle,
 } from "@/components/custom"
 import { Roles } from "@/interfaces/user"
-import { formItemLayout } from "@/styles/breakpoints"
+import { defaultBreakpoints, formItemLayout } from "@/styles/breakpoints"
 import { FormInstance, notification, TreeProps } from "antd"
 import React, { useEffect, useState } from "react"
 import { labelColFullWidth } from "../../../styles/breakpoints"
@@ -22,9 +22,12 @@ import { useCreateRoleMutation } from "@/services/hooks/roles/useCreateRoleMutat
 import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
 import { getSessionInfo } from "@/lib/session"
 import { customNotification } from "@/components/custom/customNotification"
+import { useUpdateRoleMutation } from "@/services/hooks/roles/useUpdateRoleMutation"
+import ConditionalComponent from "@/components/ConditionalComponent"
+import { useRolesStore } from "@/stores/roles.store"
 
 interface RolesFormProps {
-  form: FormInstance<Roles & { menu_options: React.Key[] }>
+  form: FormInstance<Roles>
   open: boolean
   onCancel: () => void
 }
@@ -34,7 +37,22 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([])
 
   const { data: menuTree = [] } = useGetAllMenuOptionsQuery()
-  const { mutateAsync: createRole } = useCreateRoleMutation()
+  const { mutateAsync: createRole, isPending: isCreatePending } =
+    useCreateRoleMutation()
+  const { mutateAsync: updateRole, isPending: isUpdatePending } =
+    useUpdateRoleMutation()
+
+  const { role } = useRolesStore()
+
+  const isEditing = !!role?.role_id
+
+  useEffect(() => {
+    if (role?.role_id) {
+      setSelectedKeys(role.menu_options as string[])
+      setCheckedKeys(role.menu_options as string[])
+      form.setFieldsValue({ ...role })
+    }
+  }, [role])
 
   const handleOnCancel = () => {
     CustomModalConfirmation({
@@ -47,11 +65,11 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
     })
   }
 
-  const handleOnFinish = async () => {
+  const handleOnCreate = async () => {
     try {
       const data = await form.validateFields()
 
-      data.menu_options = checkedKeys
+      data.menu_options = checkedKeys as string[]
       data.created_by = getSessionInfo().user_id
 
       await createRole(data)
@@ -59,6 +77,30 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
       customNotification({
         message: "Operación exitosa",
         description: "Rol almacenado exitosamente.",
+        type: "success",
+      })
+
+      form.resetFields()
+      onCancel()
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
+  const handleOnUpdate = async () => {
+    try {
+      const data = await form.validateFields()
+
+      data.menu_options = checkedKeys as string[]
+
+      const message = await updateRole({
+        ...data,
+        menu_options: checkedKeys as string[],
+      })
+
+      customNotification({
+        message: "Operación exitosa",
+        description: message,
         type: "success",
       })
 
@@ -79,18 +121,28 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
 
   return (
     <CustomModal
-      title="Nuevo Rol"
+      title={isEditing ? "Editar Rol" : "Nuevo Rol"}
       width={"40%"}
       open={open}
       onCancel={handleOnCancel}
-      onOk={handleOnFinish}
+      onOk={isEditing ? handleOnUpdate : handleOnCreate}
     >
-      <CustomSpin>
+      <CustomSpin spinning={isCreatePending || isUpdatePending}>
         <CustomForm form={form} {...formItemLayout}>
-          <CustomRow>
+          <CustomRow justify={"end"}>
+            <ConditionalComponent condition>
+              <CustomCol xs={8}>
+                <CustomFormItem
+                  label={"Código"}
+                  name={"role_id"}
+                  rules={[{ required: true }]}
+                >
+                  <CustomInput readOnly />
+                </CustomFormItem>
+              </CustomCol>
+            </ConditionalComponent>
             <CustomCol xs={24}>
               <CustomFormItem
-                label="Nombre"
                 name="name"
                 rules={[{ required: true }]}
                 {...labelColFullWidth}

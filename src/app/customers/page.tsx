@@ -1,18 +1,19 @@
 "use client"
 
 import { CustomSpin } from "@/components/custom"
-import React, { useCallback, useEffect, useState } from "react"
-import ReceptionTable from "../components/ReceptionTable"
-import { Repair } from "@/interfaces/repair"
-import errorHandler from "@/helpers/errorHandler"
-import { Form } from "antd"
-import useDebounce from "@/hooks/useDebounce"
 import TitleBar from "@/components/TitleBar"
+import useDebounce from "@/hooks/useDebounce"
+import { Form } from "antd"
+import React, { useCallback, useEffect, useState } from "react"
+import CustomerTable from "./components/CustomerTable"
+import { Customer } from "@/interfaces/customer"
+import errorHandler from "@/helpers/errorHandler"
+import CustomerForm from "./components/CustomerForm"
 import ConditionalComponent from "@/components/ConditionalComponent"
-import RepairForm from "../components/RepairForm"
 
 const page: React.FC = () => {
   const [form] = Form.useForm()
+
   const [formModalState, setFormModalState] = useState(false)
   const [searchKey, setSearchKey] = useState<string | undefined>("")
   const debounce = useDebounce(searchKey)
@@ -21,33 +22,35 @@ const page: React.FC = () => {
 
   useEffect(handleOnSearch, [handleOnSearch])
 
-  const toggleFormModal = () => setFormModalState((prev) => !prev)
-
-  const handleOnEdit = async (record: Repair) => {
+  const handleOnEdit = async (record: Customer) => {
     try {
-      toggleFormModal()
+      // eslint-disable-next-line no-console
+      console.log({ record })
     } catch (error) {
       errorHandler(error)
     }
   }
+
+  const toggleFormModal = () => setFormModalState((prev) => !prev)
 
   return (
     <CustomSpin>
       <TitleBar
         form={form}
         filterContent={<div />}
-        createText="Nueva Reparación"
-        searchPlaceholder={"Buscar reparaciones..."}
+        createText={"Nuevo Cliente"}
+        searchPlaceholder={"Buscar clientes..."}
         onSearch={setSearchKey}
         onCreate={toggleFormModal}
       />
-      <ReceptionTable onChange={handleOnSearch} onEdit={handleOnEdit} />
+
+      <CustomerTable onChange={handleOnSearch} onEdit={handleOnEdit} />
 
       <ConditionalComponent condition={formModalState}>
-        <RepairForm
-          open={formModalState}
-          form={form}
+        <CustomerForm
           onCancel={toggleFormModal}
+          form={form}
+          open={formModalState}
         />
       </ConditionalComponent>
     </CustomSpin>

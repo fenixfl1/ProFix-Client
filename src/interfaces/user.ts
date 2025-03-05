@@ -30,6 +30,7 @@ interface Roles {
   created_by?: string | number
   updated_by?: string
   filter: string
+  menu_options?: string[]
 }
 
 interface MenuOption<T = unknown> {

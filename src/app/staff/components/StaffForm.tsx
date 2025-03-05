@@ -101,6 +101,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ form, open, onCancel }) => {
       })
 
       onCancel()
+      form.resetFields()
     } catch (error) {
       errorHandler(error)
     }
@@ -119,6 +120,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ form, open, onCancel }) => {
       })
 
       onCancel()
+      form.resetFields()
     } catch (error) {
       errorHandler(error)
     }

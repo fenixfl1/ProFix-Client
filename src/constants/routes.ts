@@ -13,12 +13,14 @@ export const WEB_API_PATH_GET_USER_INFO = "user/get_user_info"
 export const WEB_API_PATH_GET_USER_LIST = "/user/get_user_list"
 export const WEB_API_PATH_CREATE_STAFF = "/user/register_user"
 export const WEB_API_PATH_UPDATE_STAFF = "user/update_user "
+export const WEB_API_PATH_CHANGE_PASSWORD = "/user/change_password"
 
 // roles
 export const WEB_API_PATH_GET_ROLES_LIST = "/roles/get_roles_list"
 export const WEB_API_PATH_CREATE_ROLE = "/roles/create_role"
 export const WEB_API_PATH_UPDATE_ROLE = "/roles/update_role"
 export const WEB_API_PATH_GET_ALL_ROLES = "/roles/get_all_roles"
+export const WEB_API_PATH_GET_ONE_ROLE = "/roles/get_one_role"
 
 // internal routes
 export const PATH_LOGIN = "/login"
@@ -27,6 +29,7 @@ export const PATH_STAFF = "/staff"
 export const PATH_DASHBOARD = "/dashboard"
 export const PATH_INVENTORY = "/inventory"
 export const PATH_ROLES = "/roles"
+export const PATH_CUSTOMERS = "/customers"
 
 export const protectedRoutes = [
   PATH_HOME,
@@ -34,6 +37,7 @@ export const protectedRoutes = [
   PATH_STAFF,
   PATH_INVENTORY,
   PATH_ROLES,
+  PATH_CUSTOMERS,
 ]
 
 export const publicRoutes = [PATH_LOGIN]

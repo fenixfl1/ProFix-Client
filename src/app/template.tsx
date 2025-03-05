@@ -72,6 +72,7 @@ const FloatButton = styled.div`
   bottom: 0;
   right: 0;
   margin: 16px;
+  z-index: 9999;
 `
 
 const IconContainer = styled.div`

@@ -19,11 +19,18 @@ import formatter from "@/helpers/formatter"
 import useUserStore from "@/stores/userStore"
 import { EditOutlined, UploadOutlined } from "@ant-design/icons"
 import { CollapseProps, DescriptionsProps, Form } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 import { getSessionInfo } from "@/lib/session"
 import useDrawerStore from "@/stores/drawerStore"
 import { Roles, User } from "@/interfaces/user"
+import ChangeProfilePicForm from "./ChangeProfilePicForm"
+import ChangePasswordForm from "./ChangePasswordForm"
+import { useUpdateStaffMutation } from "@/services/hooks/staff/useUpdateStaffMutation"
+import { getBase64 } from "@/helpers/base64-helpers"
+import errorHandler from "@/helpers/errorHandler"
+import { customNotification } from "@/components/custom/customNotification"
+import { useChangePasswordMutation } from "@/services/hooks/auth/useChangePasswordMutation"
 
 const AvatarContainer = styled(CustomCard)`
   height: 150px;
@@ -53,11 +60,66 @@ const StaffProfile: React.FC = () => {
   const { user, setUser } = useUserStore()
   const { open, setOpenDrawer } = useDrawerStore()
 
+  const { mutateAsync: updateUser, isPending: isUpdateUserPending } =
+    useUpdateStaffMutation()
+  const { mutateAsync: changePassword, isPending: isChangePasswordPending } =
+    useChangePasswordMutation()
+
   const handleModalState = () => {
     setShowChangeProfileOptions(!showChangeProfileOptions)
   }
 
   const isMyProfile = getSessionInfo().user_id === user.user_id
+
+  const handleChangePassword = async () => {
+    try {
+      const data = await form.validateFields()
+
+      delete data.CONFIRM_PASSWORD
+
+      await changePassword({ username: user.username, ...data })
+      customNotification({
+        type: "success",
+        message: "Contraseña actualizada",
+        description: "Tu contraseña ha sido actualizada con éxito",
+      })
+      form.resetFields()
+      setChangePasswordModal(false)
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
+  const handleUpdateUser = useCallback(async () => {
+    try {
+      const data = await form.validateFields()
+      if (!Object.keys(data).length) return
+
+      let url = data.AVATAR_URL
+
+      if (file) {
+        url = await getBase64(file.fileList[0])
+      }
+
+      const response = await updateUser({
+        user_id: user.user_id,
+        username: user.username,
+        avatar: url,
+      })
+
+      setUser(response)
+
+      sessionStorage.setItem("avatar", url)
+      form.resetFields()
+      customNotification({
+        message: "Operación Exitosa",
+        description: "Foto de perfil actualizada con éxito.",
+      })
+      setShowChangeProfileOptions(false)
+    } catch (error) {
+      errorHandler(error)
+    }
+  }, [file, form])
 
   const personalInfoItems: DescriptionsProps["items"] = [
     {
@@ -225,6 +287,26 @@ const StaffProfile: React.FC = () => {
           </CustomCol>
         </CustomRow>
       </CustomDrawer>
+
+      <ConditionalComponent condition={changePasswordModal}>
+        <ChangePasswordForm
+          onFinish={handleChangePassword}
+          open={changePasswordModal}
+          onClose={() => setChangePasswordModal(false)}
+          form={form}
+          loading={isChangePasswordPending}
+        />
+      </ConditionalComponent>
+
+      <ConditionalComponent condition={showChangeProfileOptions}>
+        <ChangeProfilePicForm
+          open={showChangeProfileOptions}
+          onClose={handleModalState}
+          onFinish={handleUpdateUser}
+          form={form}
+          loading={isUpdateUserPending}
+        />
+      </ConditionalComponent>
     </>
   )
 }

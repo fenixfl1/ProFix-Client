@@ -22,6 +22,22 @@ export const WEB_API_PATH_UPDATE_ROLE = "/roles/update_role"
 export const WEB_API_PATH_GET_ALL_ROLES = "/roles/get_all_roles"
 export const WEB_API_PATH_GET_ONE_ROLE = "/roles/get_one_role"
 
+// customer
+export const WEB_API_PATH_CREATE_CUSTOMER = "/customers/create_customer"
+export const WEB_API_PATH_UPDATE_CUSTOMER = "/customers/update_customer"
+export const WEB_API_PATH_GET_CUSTOMERS = "/customers/get_customers"
+export const WEB_API_PATH_GET_ONE_CUSTOMER = "/customers/get_customer"
+
+// repair_order
+export const WEB_API_PATH_CREATE_REPAIR_ORDER =
+  "/repair_order/create_repair_order"
+export const WEB_API_PATH_UPDATE_DEVICE = "/repair_order/update_repair_order"
+export const WEB_API_PATH_GET_REPAIR_ORDERS = "/repair_order/get_repair_orders"
+export const WEB_API_PATH_GET_PHONE_BRANDS = "/repair_order/get_phone_brands"
+export const WEB_API_PATH_GET_ONE_DEVICE = "/repair_order/get_repair_order"
+export const WEB_API_PATH_GET_REPAIR_ORDER_HISTORY =
+  "/repair_order/get_repair_order_history"
+
 // internal routes
 export const PATH_LOGIN = "/login"
 export const PATH_HOME = "/"
@@ -30,6 +46,7 @@ export const PATH_DASHBOARD = "/dashboard"
 export const PATH_INVENTORY = "/inventory"
 export const PATH_ROLES = "/roles"
 export const PATH_CUSTOMERS = "/customers"
+export const PATH_RECEPTION = "/repairs"
 
 export const protectedRoutes = [
   PATH_HOME,
@@ -38,6 +55,7 @@ export const protectedRoutes = [
   PATH_INVENTORY,
   PATH_ROLES,
   PATH_CUSTOMERS,
+  PATH_RECEPTION,
 ]
 
 export const publicRoutes = [PATH_LOGIN]

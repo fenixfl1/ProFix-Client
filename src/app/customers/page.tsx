@@ -10,22 +10,71 @@ import { Customer } from "@/interfaces/customer"
 import errorHandler from "@/helpers/errorHandler"
 import CustomerForm from "./components/CustomerForm"
 import ConditionalComponent from "@/components/ConditionalComponent"
+import { useCustomerStore } from "@/stores/customer.store"
+import { useGetCustomerMutation } from "@/services/hooks/customer/useGetCustomersMutation"
+import { useGetOneCustomerMutation } from "@/services/hooks/customer/useGetOneCustomerMutation"
+import { useUpdateCustomerMutation } from "@/services/hooks/customer/useUpdateCustomerMutation"
+import { customNotification } from "@/components/custom/customNotification"
 
 const page: React.FC = () => {
   const [form] = Form.useForm()
 
+  const [shouldUpdate, setShouldUpdate] = useState(false)
   const [formModalState, setFormModalState] = useState(false)
-  const [searchKey, setSearchKey] = useState<string | undefined>("")
+  const [searchKey, setSearchKey] = useState<string>("")
   const debounce = useDebounce(searchKey)
 
-  const handleOnSearch = useCallback((page = 1, size = 10) => {}, [debounce])
+  const { mutateAsync: getCustomers, isPending: isGetCustomersPending } =
+    useGetCustomerMutation()
+  const { mutateAsync: getOneCustomer, isPending: isGetOnePending } =
+    useGetOneCustomerMutation()
+  const { mutateAsync: updateCustomer, isPending: isUpdateCustomerPending } =
+    useUpdateCustomerMutation()
+
+  const { metadata, setCustomer } = useCustomerStore()
+
+  const { pagination } = metadata ?? {}
+
+  const handleOnSearch = useCallback(
+    (page = pagination?.currentPage, size = pagination?.pageSize) => {
+      if (formModalState) return
+      getCustomers({
+        page,
+        size,
+        condition: [
+          {
+            value: debounce,
+            operator: "LIKE",
+            field: "name",
+          },
+        ],
+      })
+    },
+    [debounce, formModalState, shouldUpdate]
+  )
 
   useEffect(handleOnSearch, [handleOnSearch])
 
-  const handleOnEdit = async (record: Customer) => {
+  useEffect(() => {
+    if (!formModalState) {
+      setCustomer({} as Customer)
+      form.resetFields()
+    }
+  }, [formModalState])
+
+  const handleOnChangeState = async (record: Customer) => {
     try {
-      // eslint-disable-next-line no-console
-      console.log({ record })
+      const message = await updateCustomer({
+        customer_id: record.customer_id,
+        state: record.state === "A" ? "I" : "A",
+      })
+
+      customNotification({
+        message: "Operación exitosa",
+        description: message,
+        type: "success",
+      })
+      setShouldUpdate(!shouldUpdate)
     } catch (error) {
       errorHandler(error)
     }
@@ -33,8 +82,21 @@ const page: React.FC = () => {
 
   const toggleFormModal = () => setFormModalState((prev) => !prev)
 
+  const handleOnEdit = async (record: Customer) => {
+    try {
+      await getOneCustomer(record.customer_id)
+      toggleFormModal()
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
   return (
-    <CustomSpin>
+    <CustomSpin
+      spinning={
+        isGetCustomersPending || isGetOnePending || isUpdateCustomerPending
+      }
+    >
       <TitleBar
         form={form}
         filterContent={<div />}
@@ -44,7 +106,11 @@ const page: React.FC = () => {
         onCreate={toggleFormModal}
       />
 
-      <CustomerTable onChange={handleOnSearch} onEdit={handleOnEdit} />
+      <CustomerTable
+        onChange={handleOnSearch}
+        onEdit={handleOnEdit}
+        onUpdate={handleOnChangeState}
+      />
 
       <ConditionalComponent condition={formModalState}>
         <CustomerForm

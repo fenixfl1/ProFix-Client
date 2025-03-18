@@ -56,6 +56,8 @@ import useDrawerStore from "@/stores/drawerStore"
 import StaffProfile from "./staff/components/StaffProfile"
 import jsonParse from "@/helpers/jsonParse"
 import useMenuOptionStore from "@/stores/menu-option.store"
+import TextLogo from "@/components/TextLogo"
+import sleep from "@/helpers/sleep"
 
 const LogoContainer = styled.div`
   height: 75px;
@@ -95,15 +97,18 @@ const IconContainer = styled.div`
 `
 
 const Logo = styled.span`
-  font-family: "Courier New", Courier, monospace;
-  font-size: 32px;
-  font-weight: bold;
-  color: white;
-  padding: 16px;
-  display: block;
-  text-align: center;
-  color: ${({ theme }) => theme.colorPrimaryText};
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: "Montserrat", sans-serif;
+  font-size: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ff5733;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 3px;
+  background: linear-gradient(45deg, #ff5733, #ffcc33);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 `
 
 const HeaderContainer = styled(CustomRow)`
@@ -147,6 +152,7 @@ const CustomContentContainer = styled.div`
   margin: 0px 34px 10px 274px !important;
   padding: 10px;
   height: auto;
+  box-shadow: ${({ theme }) => theme.boxShadow};
 
   @media screen and (min-width: 1430px) {
     max-width: 1090px;
@@ -193,9 +199,11 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
     useGetUserInfoMutation()
 
   useEffect(() => {
-    setSelectedKey(
-      jsonParse<string[]>(sessionStorage.getItem("selectedKeys") as string)
-    )
+    if (document.location.href === PATH_HOME) {
+      setSelectedKey(
+        jsonParse<string[]>(sessionStorage.getItem("selectedKeys") as string)
+      )
+    }
   }, [])
 
   useEffect(() => {
@@ -253,16 +261,29 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
   }
 
   return (
-    <ConditionalComponent condition={isLoggedIn()} fallback={children}>
+    <ConditionalComponent
+      condition={isLoggedIn()}
+      fallback={
+        <>
+          {children}
+          <FloatButton style={{ display: "none" }}>
+            <Darkreader defaultDarken={isDarkMode} onChange={setIsDarkMode} />
+          </FloatButton>
+        </>
+      }
+    >
       <>
         <CustomLayout hasSider>
           <Sider theme={"light"} width={240}>
             <LogoContainer
-              onClick={() => {
+              onClick={async () => {
+                setSelectedKey([])
+                setSelectedMenuOption({} as never)
+                await sleep(500)
                 router.push(PATH_HOME)
               }}
             >
-              <img width={"85%"} src={"/assets/logo_1.svg"} />
+              <TextLogo />
             </LogoContainer>
             <CustomRow>
               <UserContainer

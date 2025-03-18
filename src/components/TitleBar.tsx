@@ -16,7 +16,7 @@ import { FormInstance } from "antd"
 import FilterTemplate from "./FilterTemplate"
 
 interface TitleBarProps {
-  onSearch?: (value?: string) => void
+  onSearch?: (value: string) => void
   onCreate?: () => void
   filterContent?: React.JSX.Element
   createText?: string
@@ -35,7 +35,11 @@ const TitleBar: React.FC<TitleBarProps> = ({
   form,
 }) => {
   const content = (
-    <FilterTemplate onSearch={onSearch} onFilter={onFilter} form={form}>
+    <FilterTemplate
+      onSearch={() => onSearch?.("")}
+      onFilter={onFilter}
+      form={form}
+    >
       {filterContent}
     </FilterTemplate>
   )

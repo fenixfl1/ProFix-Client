@@ -1,6 +1,7 @@
 import { Formatter } from "@/interfaces/general"
 import moment from "moment"
 import { DATE_FORMAT, LOG_DATE_FORMAT, date } from "./date-helpers"
+import capitalize from "./capitalize"
 
 /**
  * This function is used to format a specific string to a specific formatW
@@ -26,9 +27,10 @@ function formatter(props: Formatter) {
       return fixedValue.replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",")
     }
     if (format === "long_date") {
-      return moment(originalValue)
-        .format(LOG_DATE_FORMAT)
-        ?.replace("Fecha inválida", "N/A")
+      return capitalize(moment(originalValue).format(LOG_DATE_FORMAT))?.replace(
+        "Fecha inválida",
+        "N/A"
+      )
     }
     if (format === "date") {
       const date = moment(originalValue)

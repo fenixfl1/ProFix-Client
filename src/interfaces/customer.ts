@@ -1,4 +1,4 @@
-import { Repair } from "./repair"
+import { Device } from "./repair"
 
 export interface Customer {
   customer_id: number
@@ -9,17 +9,8 @@ export interface Customer {
   username: string
   password: string
   address?: string
+  state: string
+  created_at: string
+  updated_at: string
   devices?: Device[]
-}
-
-export interface Device {
-  device_id: number
-  customer: Customer
-  brand: string
-  model: string
-  imei: string
-  color?: string
-  accessories?: string
-  physical_condition?: string
-  repairs?: Repair[]
 }

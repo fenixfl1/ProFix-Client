@@ -77,6 +77,14 @@ const GlobalStyles = createGlobalStyle`
       }
     }
   }
+
+  .inactive-row {
+    color: #b9b9b9 !important;
+
+    svg: {
+      fill: #b9b9b9 !important;
+    }
+  }
 `
 
 export default GlobalStyles

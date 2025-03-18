@@ -37,7 +37,7 @@ const AvatarContainer = styled(CustomCard)`
   min-height: 150px;
   width: 100% !important;
   background-color: ${({ theme }) => theme.baseBgColor} !important;
-  background-image: url("https://images.unsplash.com/photo-1654599879153-61eb2d785fb7?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") !important;
+  background-image: url("/assets/logo3.png") !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -257,7 +257,7 @@ const StaffProfile: React.FC = () => {
                 {user?.avatar}
               </CustomAvatar>
               <CustomSpace width={"max-content"} size={2}>
-                <CustomText strong>
+                <CustomText strong color="#000">
                   {user?.name} {user?.last_name}
                 </CustomText>
                 <CustomText type={"secondary"}>@{user?.username}</CustomText>

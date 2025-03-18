@@ -14,6 +14,7 @@ import {
   CustomPasswordInput,
   CustomRow,
 } from "@/components/custom"
+import TextLogo from "@/components/TextLogo"
 import { formItemLayout } from "@/styles/breakpoints"
 import { LoginOutlined } from "@ant-design/icons"
 import { FormInstance } from "antd/lib"
@@ -22,12 +23,19 @@ import React from "react"
 import styled from "styled-components"
 
 const Layout = styled(CustomLayout)`
+  background-image: url("/assets/login_logo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   height: 100vh;
+  margin: 0;
 `
 
 const LoginLogoContainer = styled.div`
-  height: 150px;
   margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   img {
     height: 100%;
@@ -64,7 +72,17 @@ const LoginForm: NextPage<LoginFormProps> = ({
       <CustomRow justify={"center"}>
         <CustomCol xs={16}>
           <CustomRow justify={"center"}>
-            <img width={"60%"} src="/assets/logo2.png" alt="Logo" />
+            <img
+              style={{
+                opacity: 0.9,
+                border: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              width={"95%"}
+              src="/assets/login_logo.png"
+              alt="Logo"
+            />
           </CustomRow>
         </CustomCol>
         <CustomCol xs={8}>
@@ -79,7 +97,8 @@ const LoginForm: NextPage<LoginFormProps> = ({
                   >
                     <CustomCol xs={24}>
                       <LoginLogoContainer>
-                        <img width={"100%"} src={"/assets/text.svg"} />
+                        <TextLogo />
+                        {/* <img width={"100%"} src={"/assets/logo_3.png"} /> */}
                       </LoginLogoContainer>
                     </CustomCol>
                     <ConditionalComponent condition={!!message}>

@@ -11,15 +11,20 @@ import {
   CustomTextArea,
 } from "@/components/custom"
 import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
+import { customNotification } from "@/components/custom/customNotification"
+import errorHandler from "@/helpers/errorHandler"
 import { normalizeMaskedInput } from "@/helpers/form-item-normalizers"
 import { Customer } from "@/interfaces/customer"
+import { useCreateCustomerMutation } from "@/services/hooks/customer/useCreateCustomerMutation"
+import { useUpdateCustomerMutation } from "@/services/hooks/customer/useUpdateCustomerMutation"
+import { useCustomerStore } from "@/stores/customer.store"
 import {
   defaultBreakpoints,
   formItemLayout,
   labelColFullWidth,
 } from "@/styles/breakpoints"
 import { FormInstance } from "antd"
-import React from "react"
+import React, { useEffect } from "react"
 
 interface CustomerFormProps {
   form: FormInstance<Customer>
@@ -32,6 +37,41 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
   open,
   onCancel,
 }) => {
+  const { customer } = useCustomerStore()
+  const { mutateAsync: createCustomer, isPending: isCreatePending } =
+    useCreateCustomerMutation()
+  const { mutateAsync: updateCustomer, isPending: isUpdatePending } =
+    useUpdateCustomerMutation()
+
+  const isEditing = !!customer?.customer_id
+
+  useEffect(() => {
+    form.setFieldsValue({ ...customer })
+  }, [customer])
+
+  const handleOnFinish = async () => {
+    try {
+      const data = await form.validateFields()
+
+      let description = "El cliente ha sido creado exitosamente"
+      if (isEditing) {
+        description = await updateCustomer({ ...data })
+      } else {
+        await createCustomer(data)
+      }
+
+      form.resetFields()
+      customNotification({
+        message: "Operación exitosa",
+        description,
+        type: "success",
+      })
+      onCancel()
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
   const handleOnCancel = () => {
     CustomModalConfirmation({
       title: "confirmación",
@@ -43,14 +83,15 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
   return (
     <CustomModal
       width={"50%"}
-      title={"Nuevo Cliente"}
+      title={isEditing ? "Editar Cliente" : "Nuevo Cliente"}
       open={open}
       onCancel={handleOnCancel}
+      onOk={handleOnFinish}
     >
-      <CustomSpin>
+      <CustomSpin spinning={isCreatePending || isUpdatePending}>
         <CustomForm form={form} {...formItemLayout}>
           <CustomRow justify={"end"}>
-            <ConditionalComponent condition>
+            <ConditionalComponent condition={isEditing}>
               <CustomCol>
                 <CustomFormItem
                   label={"Código"}

@@ -1,9 +1,10 @@
 import React from "react"
-import { Select, SelectProps } from "antd"
+import { RefSelectProps, Select, SelectProps } from "antd"
 import { defaultTheme } from "@/styles/themes"
 
 interface CustomSelectProps extends SelectProps {
   width?: string | number
+  ref?: React.RefObject<RefSelectProps>
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -18,12 +19,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       showSearch={showSearch}
       size={size}
       optionLabelProp={optionLabelProp}
-      filterOption={(input, option) => {
-        return option?.label
-          ?.toString()
-          ?.toLowerCase()
-          ?.includes(input) as boolean
-      }}
+      filterOption={(input, option) =>
+        Boolean(
+          ((option?.label as string) ?? "")
+            .toLowerCase()
+            .includes(input.toLowerCase())
+        )
+      }
       style={{ ...props.style, width }}
       {...props}
     >

@@ -10,7 +10,7 @@ export interface CustomColumnType<T> extends ColumnType<T> {
 
 const CustomTable = React.forwardRef<any, TableProps<any>>(
   (
-    { expandable, bordered = false, size = defaultTheme.size, ...props },
+    { expandable, bordered = true, size = defaultTheme.size, ...props },
     ref
   ) => {
     return (

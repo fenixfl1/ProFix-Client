@@ -113,6 +113,7 @@ export const antTheme: ThemeConfig = {
     },
     Table: {
       bodySortBg: "#3869a1",
+      colorBgContainer: "rgba(250,250,250,0.2)",
     },
   },
 }

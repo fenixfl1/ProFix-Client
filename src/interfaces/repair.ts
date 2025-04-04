@@ -66,7 +66,7 @@ export interface RepairOrder {
   reported_issue?: string
   signed_staff_name?: string
   state: string
-  status: string
+  status: Status
   history: RepairOrderHistory[]
 }
 
@@ -81,4 +81,5 @@ export interface RepairOrderHistory {
   updated_at: string
   state: string
   username: string
+  comment: string
 }

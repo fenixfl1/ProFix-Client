@@ -99,10 +99,11 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
     {
       key: "Acciones",
       title: "Acciones",
+      width: "5%",
       render: (_, record) => (
         <CustomSpace
           direction={"horizontal"}
-          split={<CustomDivider type={"vertical"} />}
+          split={<CustomDivider style={{ margin: 0 }} type={"vertical"} />}
         >
           <CustomTooltip title="Editar">
             <CustomButton

@@ -41,7 +41,10 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
               <GlobalStyles />
               <AntdRegistry>
                 <App>
-                  <ConfigProvider theme={{ ...antTheme }}>
+                  <ConfigProvider
+                    theme={{ ...antTheme }}
+                    componentSize="middle"
+                  >
                     <ConditionalComponent
                       condition={demLoaded}
                       fallback={<Fallback />}

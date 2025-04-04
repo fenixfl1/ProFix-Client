@@ -12,9 +12,9 @@ export const PopoverContainer = styled.div`
 `
 
 const CustomPopover = React.forwardRef<TooltipRef, PopoverProps>(
-  ({ trigger = "click", ...props }, ref) => {
+  ({ placement = "bottom", trigger = "click", ...props }, ref) => {
     return (
-      <Popover {...props} ref={ref} trigger={trigger}>
+      <Popover placement={placement} {...props} ref={ref} trigger={trigger}>
         {props.children}
       </Popover>
     )

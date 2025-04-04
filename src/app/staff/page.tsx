@@ -79,7 +79,6 @@ const page: React.FC = () => {
     <CustomSpin spinning={isGetUserInfoLoading || isGetListPending}>
       <TitleBar
         form={form}
-        filterContent={<div />}
         createText="Nuevo Usuario"
         searchPlaceholder={"Buscar usuarios..."}
         onSearch={setSearchKey}

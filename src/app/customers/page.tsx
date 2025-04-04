@@ -99,7 +99,6 @@ const page: React.FC = () => {
     >
       <TitleBar
         form={form}
-        filterContent={<div />}
         createText={"Nuevo Cliente"}
         searchPlaceholder={"Buscar clientes..."}
         onSearch={setSearchKey}

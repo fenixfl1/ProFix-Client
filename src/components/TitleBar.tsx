@@ -22,6 +22,7 @@ interface TitleBarProps {
   createText?: string
   searchPlaceholder?: string
   form: FormInstance
+  initialValue?: Record<string, unknown>
   onFilter?: () => void
 }
 
@@ -33,12 +34,14 @@ const TitleBar: React.FC<TitleBarProps> = ({
   searchPlaceholder = "Buscar...",
   onFilter,
   form,
+  initialValue,
 }) => {
   const content = (
     <FilterTemplate
       onSearch={() => onSearch?.("")}
       onFilter={onFilter}
       form={form}
+      initialValue={initialValue}
     >
       {filterContent}
     </FilterTemplate>

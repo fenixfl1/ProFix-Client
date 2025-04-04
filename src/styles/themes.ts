@@ -115,5 +115,9 @@ export const antTheme: ThemeConfig = {
       bodySortBg: "#3869a1",
       colorBgContainer: "rgba(250,250,250,0.2)",
     },
+
+    Tabs: {
+      horizontalMargin: "0 0 20px 0",
+    },
   },
 }

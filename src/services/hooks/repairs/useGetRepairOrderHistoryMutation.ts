@@ -27,7 +27,7 @@ export const useGetRepairOrderHistoryMutation = () => {
         condition
       )
 
-      return data
+      return data || initialData
     },
   })
 }

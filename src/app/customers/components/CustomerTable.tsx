@@ -119,9 +119,6 @@ const CustomerTable: React.FC<CustomerTablesProps> = ({
         columns={columns}
         onChange={({ current, pageSize }) => onChange(current, pageSize)}
         dataSource={customers}
-        rowClassName={({ state }) =>
-          state === "A" ? "active-row" : "inactive-row"
-        }
         pagination={{
           pageSize: pagination.pageSize,
           total: pagination.totalRows,

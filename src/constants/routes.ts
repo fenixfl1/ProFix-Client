@@ -37,6 +37,20 @@ export const WEB_API_PATH_GET_PHONE_BRANDS = "/repair_order/get_phone_brands"
 export const WEB_API_PATH_GET_ONE_DEVICE = "/repair_order/get_repair_order"
 export const WEB_API_PATH_GET_REPAIR_ORDER_HISTORY =
   "/repair_order/get_repair_order_history"
+export const WEB_API_PATH_CHANGE_ORDER_STATUS =
+  "/repair_order/change_order_status"
+
+// products
+export const WEB_API_PATH_CREATE_PRODUCT_HEADER = "/products/create_product"
+export const WEB_API_PATH_UPDATE_PRODUCT_HEADER = "/products/update_product"
+export const WEB_API_PATH_GET_PRODUCT_HEADERS = "/products/get_product_headers"
+export const WEB_API_PATH_GET_PRODUCTS = "/products/get_products"
+export const WEB_API_PATH_GET_CATEGORIES = "/products/get_categories"
+export const WEB_API_PATH_CREATE_CATEGORY = "/products/create_category"
+export const WEB_API_PATH_CREATE_PRODUCT_DETAIL =
+  "/products/create_product_detail"
+export const WEB_API_PATH_UPDATE_PRODUCT_DETAIL =
+  "/products/update_product_detail"
 
 // internal routes
 export const PATH_LOGIN = "/login"

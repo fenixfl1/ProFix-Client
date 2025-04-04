@@ -25,12 +25,14 @@ import {
   RefSelectProps,
   TimelineItemProps,
 } from "antd"
-import React, { useEffect, useRef } from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 import CustomDivider from "../../../components/custom/CustomDivider"
 import { EditOutlined } from "@ant-design/icons"
 import { defaultTheme } from "@/styles/themes"
 import moment from "moment"
 import ConditionalComponent from "@/components/ConditionalComponent"
+import { useGetRepairOrderHistoryMutation } from "@/services/hooks/repairs/useGetRepairOrderHistoryMutation"
+import { truncateText } from "@/helpers/truncateText"
 
 const statusMap: Record<string, string> = {
   P: "Pendiente",
@@ -62,11 +64,42 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
   const [form] = Form.useForm()
   const { setRepairOrder, repairOrder } = useRepairOrdersStore()
 
-  const { history } = repairOrder
+  const {
+    mutateAsync: getHistory,
+    isPending: isGetHistoryPending,
+    data: {
+      data: history,
+      metadata: { pagination },
+    },
+  } = useGetRepairOrderHistoryMutation()
 
   useEffect(() => {
     if (!open) setRepairOrder({} as RepairOrder)
   }, [open])
+
+  const handleGetHistory = useCallback(
+    (page = pagination.currentPage, size = pagination.pageSize) => {
+      getHistory({
+        page,
+        size,
+        condition: [
+          {
+            value: "A",
+            field: "state",
+            operator: "=",
+          },
+          {
+            value: repairOrder.repair_order_id,
+            field: "repair_order_id",
+            operator: "=",
+          },
+        ],
+      })
+    },
+    [repairOrder]
+  )
+
+  useEffect(handleGetHistory, [handleGetHistory])
 
   const generalInfo: DescriptionsProps["items"] = [
     {
@@ -78,32 +111,7 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
       key: "status",
       label: "Estatus",
       span: 2,
-      children: (
-        <CustomSpace direction={"horizontal"}>
-          <CustomFormItem
-            noStyle
-            name={"status"}
-            initialValue={repairOrder.status}
-          >
-            <CustomSelect
-              style={{ minWidth: "100px" }}
-              ref={statusRef}
-              variant={"filled"}
-              onSelect={() =>
-                statusRef?.current?.focus({ preventScroll: true })
-              }
-              options={Object.keys(statusMap).map((key) => ({
-                label: statusMap[key],
-                value: key,
-              }))}
-            />
-          </CustomFormItem>
-          <EditOutlined
-            style={{ color: defaultTheme.primaryColor, cursor: "pointer" }}
-            onClick={() => statusRef?.current?.focus()}
-          />
-        </CustomSpace>
-      ),
+      children: statusMap[repairOrder.status],
     },
     {
       key: "reported_issue",
@@ -246,8 +254,6 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
     children: (
       <p>
         <p>
-          <CustomText type={"secondary"}>{item.created_by}</CustomText>
-          {". "}
           <CustomText underline type={"secondary"}>
             @{item.username}
           </CustomText>
@@ -256,16 +262,23 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
           condition={item.new_status !== item.previous_status}
           fallback={<CustomText>Creo la orden de reparación</CustomText>}
         >
-          <span>
-            Cambio el estado de{" "}
-            <CustomText underline type={"danger"}>
-              {statusMap[item.previous_status]}
-            </CustomText>{" "}
-            a{" "}
-            <CustomText underline type={"success"}>
-              {statusMap[item.new_status]}
-            </CustomText>
-          </span>
+          <p>
+            <p>
+              Cambio el estado de{" "}
+              <CustomText underline type={"danger"}>
+                {statusMap[item.previous_status]}.
+              </CustomText>{" "}
+              a{" "}
+              <CustomText underline type={"success"}>
+                {statusMap[item.new_status]}
+              </CustomText>
+            </p>
+            <p>
+              <CustomText type={"secondary"}>
+                {truncateText(item.comment, 150)}
+              </CustomText>
+            </p>
+          </p>
         </ConditionalComponent>
       </p>
     ),
@@ -307,7 +320,7 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
     },
     {
       key: "history",
-      label: <CustomTitle level={5}>Historial del reparación</CustomTitle>,
+      label: <CustomTitle level={5}>Historial de reparación</CustomTitle>,
       children: <CustomTimeline items={historyItems} />,
     },
   ]
@@ -326,7 +339,15 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
       <CustomForm form={form}>
         <CustomRow justify={"start"}>
           <CustomCol xs={24}>
-            <CustomCollapse defaultActiveKey={["0", "1", "2"]} items={items} />
+            <CustomCollapse
+              defaultActiveKey={[
+                "general_info",
+                "customer_info",
+                "device_info",
+                "history",
+              ]}
+              items={items}
+            />
           </CustomCol>
         </CustomRow>
       </CustomForm>

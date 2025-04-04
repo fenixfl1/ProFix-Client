@@ -1,21 +1,26 @@
 import React from "react"
 import { Modal, ModalProps } from "antd"
 import { CheckOutlined, StopOutlined } from "@ant-design/icons"
-import { defaultTheme } from "@/styles/themes"
 
 const CustomModal: React.FC<ModalProps> = ({
   okText = "Aceptar",
   cancelText = "Cancelar",
-  okButtonProps = { icon: <CheckOutlined />, size: defaultTheme.size },
-  cancelButtonProps = { icon: <StopOutlined />, size: defaultTheme.size },
+  okButtonProps,
+  cancelButtonProps,
   closable = false,
   ...props
 }) => {
   return (
     <Modal
       closable={closable}
-      cancelButtonProps={cancelButtonProps}
-      okButtonProps={okButtonProps}
+      cancelButtonProps={{
+        icon: <StopOutlined />,
+        ...cancelButtonProps,
+      }}
+      okButtonProps={{
+        icon: <CheckOutlined />,
+        ...okButtonProps,
+      }}
       okText={okText}
       cancelText={cancelText}
       {...props}

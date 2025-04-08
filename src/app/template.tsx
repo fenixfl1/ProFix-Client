@@ -228,6 +228,7 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
   const handleOnSelect = (item: MenuOption, keyPath: string[]) => {
     if (item.children?.length) return
     if (item.type !== "link" && item.path) {
+      setSelectedKey(keyPath)
       router.push(item.path)
       sessionStorage.setItem("selectedKeys", JSON.stringify(keyPath))
       sessionStorage.setItem("selectedMenuOption", JSON.stringify(item))
@@ -312,8 +313,8 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
               </UserContainer>
             </CustomRow>
             <CustomMenu
-              theme="light"
-              mode="inline"
+              theme={"light"}
+              mode={"inline"}
               openKeys={selectedItem?.length > 1 ? selectedItem : undefined}
               selectedKeys={selectedItem}
               defaultOpenKeys={selectedItem}

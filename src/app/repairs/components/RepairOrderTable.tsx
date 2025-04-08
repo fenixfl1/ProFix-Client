@@ -1,3 +1,5 @@
+"use client"
+
 import {
   CustomButton,
   CustomCol,
@@ -52,11 +54,13 @@ const RepairOrderTable: React.FC = () => {
   const [selectedRow, setSelectedRow] = useState<RepairOrder | undefined>(
     undefined
   )
+  const [repairReceiptModalState, setRepairReceiptModalState] = useState(false)
   const [infoModalState, setInfoModalState] = useState(false)
   const [repairModalVisibilityState, setRepairModalVisibilityState] =
     useState(false)
 
-  const { repairOrders, metadata, setRepairOrder } = useRepairOrdersStore()
+  const { repairOrders, metadata, setRepairOrder, receipt, setReceipt } =
+    useRepairOrdersStore()
 
   const { data: brands } = useGetBrandQuery()
 
@@ -137,6 +141,11 @@ const RepairOrderTable: React.FC = () => {
       errorHandler(error)
     }
   }
+
+  React.useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log({ ...makePagination(metadata), metadata })
+  }, [metadata])
 
   const columnsMap = {
     repair_order_id: "Código",
@@ -322,6 +331,10 @@ const RepairOrderTable: React.FC = () => {
           open={formModalState}
           form={form}
           onCancel={toggleFormModal}
+          onFinish={() => {
+            toggleFormModal()
+            setRepairReceiptModalState(true)
+          }}
         />
       </ConditionalComponent>
     </>

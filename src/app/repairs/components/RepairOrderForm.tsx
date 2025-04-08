@@ -38,6 +38,7 @@ import {
   formItemLayout,
   labelColFullWidth,
 } from "@/styles/breakpoints"
+import { generateReceiptsPdf } from "@/helpers/report-helpers"
 
 const DeviceContainer = styled.div`
   display: flex;
@@ -50,16 +51,17 @@ interface RepairFormProps {
   form: FormInstance
   open: boolean
   onCancel: () => void
+  onFinish: () => void
 }
 
 const RepairOrderForm: React.FC<RepairFormProps> = ({
   form,
   open,
   onCancel,
+  onFinish,
 }) => {
   const [customerForm] = Form.useForm()
   const devices = Form.useWatch<Record<string, unknown>[]>("devices", form)
-  const [device, setDevice] = useState<{ key: number; type: React.Key }[]>()
   const [activeKey, setActiveKey] = useState<number>(0)
   const [customerModalState, setCustomerModalState] = useState(false)
   const [searchKey, setSearchKey] = useState<string>("")
@@ -112,7 +114,7 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
     try {
       const data = await form.validateFields()
 
-      await createRepairOrder(data)
+      const response = await createRepairOrder(data)
 
       customNotification({
         message: "Operación exitosa",
@@ -120,8 +122,10 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
         type: "success",
       })
 
+      await generateReceiptsPdf(response)
+
       form.resetFields()
-      onCancel()
+      onFinish()
     } catch (error) {
       errorHandler(error)
     }
@@ -144,11 +148,7 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
         width={"50%"}
       >
         <CustomSpin spinning={isGetCustomerPending || isCreateOrderPending}>
-          <CustomForm
-            form={form}
-            initialValues={{ devices: [{}] }}
-            {...formItemLayout}
-          >
+          <CustomForm form={form} initialValues={{}} {...formItemLayout}>
             <CustomRow justify={"end"}>
               <CustomCol xs={16}>
                 <CustomFormItem
@@ -190,6 +190,7 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
                       <CustomCollapse
                         accordion
                         size={"middle"}
+                        onChange={(keys: any) => setActiveKey(keys)}
                         activeKey={activeKey}
                         items={fields.map((field) => ({
                           key: field.key,
@@ -358,19 +359,8 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
                       type="dashed"
                       onClick={() => {
                         try {
-                          const index = devices.findIndex(
-                            (item) => item.ORDEN === device?.length
-                          )
-
-                          if (index >= 0) {
-                            // await form.validateFields()
-                          }
-
                           setActiveKey(devices?.length)
-                          add({
-                            ORDEN: devices?.length + 1,
-                            ATRIBUTOS: [{}],
-                          })
+                          add({})
                         } catch (error) {
                           errorHandler(error)
                         }
@@ -383,6 +373,14 @@ const RepairOrderForm: React.FC<RepairFormProps> = ({
                 )}
               </CustomFormList>
             </CustomRow>
+
+            {/* <Form.Item noStyle shouldUpdate>
+              {() => (
+                <pre>
+                  <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
+                </pre>
+              )}
+            </Form.Item> */}
           </CustomForm>
         </CustomSpin>
       </CustomModal>

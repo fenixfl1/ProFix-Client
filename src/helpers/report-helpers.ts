@@ -1,10 +1,12 @@
 import * as XLSX from "xlsx"
 import { saveAs } from "file-saver"
 import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
 import autoTable from "jspdf-autotable"
 import { getSessionInfo } from "@/lib/session"
 import formatter from "./formatter"
 import moment from "moment"
+import { Receipt } from "@/interfaces/repair"
 
 export interface ExportProps<T> {
   data: T[]
@@ -215,4 +217,41 @@ export async function exportToCSV<T = any>({
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+export async function generateReceiptsPdf(receipts: Receipt[]) {
+  const pdf = new jsPDF("p", "pt", "a4")
+
+  for (let i = 0; i < receipts.length; i++) {
+    // Crear un contenedor temporal
+    const wrapper = document.createElement("div")
+    wrapper.innerHTML = receipts[i].content
+    wrapper.style.width = "100mm" // Tamaño A4
+    wrapper.style.padding = "170mm"
+    wrapper.style.padding = "10mm"
+    wrapper.style.boxSizing = "border-box"
+    wrapper.style.backgroundColor = "white"
+    wrapper.style.color = "black"
+    wrapper.style.fontSize = "12px"
+    wrapper.style.fontFamily = "Arial, sans-serif"
+
+    document.body.appendChild(wrapper)
+
+    // Convertir a imagen
+    const canvas = await html2canvas(wrapper, {
+      scale: 2,
+    })
+    const imgData = canvas.toDataURL("image/png")
+
+    const imgProps = pdf.getImageProperties(imgData)
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+
+    if (i > 0) pdf.addPage()
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight)
+
+    document.body.removeChild(wrapper)
+  }
+
+  pdf.save("recibos.pdf")
 }

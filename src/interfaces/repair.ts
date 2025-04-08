@@ -83,3 +83,9 @@ export interface RepairOrderHistory {
   username: string
   comment: string
 }
+
+export interface Receipt {
+  receipt_id: number
+  repair_order_id: number
+  content: string
+}

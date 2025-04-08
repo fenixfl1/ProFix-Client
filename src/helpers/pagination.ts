@@ -5,7 +5,7 @@ function makePagination(metadata: Metadata): TablePaginationConfig {
   return {
     showSizeChanger: true,
     pageSize: metadata?.pagination?.pageSize,
-    total: metadata?.pagination?.totalPages,
+    total: Number(metadata?.pagination?.totalRows),
     current: metadata?.pagination?.currentPage,
   }
 }

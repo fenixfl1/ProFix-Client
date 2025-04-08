@@ -39,6 +39,7 @@ export const WEB_API_PATH_GET_REPAIR_ORDER_HISTORY =
   "/repair_order/get_repair_order_history"
 export const WEB_API_PATH_CHANGE_ORDER_STATUS =
   "/repair_order/change_order_status"
+export const WEB_API_PATH_GET_ORDER_RECEIPT = "/repair_order/get_receipt"
 
 // products
 export const WEB_API_PATH_CREATE_PRODUCT_HEADER = "/products/create_product"

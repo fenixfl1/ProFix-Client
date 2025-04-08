@@ -1,5 +1,6 @@
 import {
   CustomBadge,
+  CustomButton,
   CustomCol,
   CustomCollapse,
   CustomDescriptions,
@@ -11,6 +12,7 @@ import {
   CustomRow,
   CustomSelect,
   CustomSpace,
+  CustomSpin,
   CustomText,
   CustomTimeline,
   CustomTitle,
@@ -27,12 +29,15 @@ import {
 } from "antd"
 import React, { useCallback, useEffect, useRef } from "react"
 import CustomDivider from "../../../components/custom/CustomDivider"
-import { EditOutlined } from "@ant-design/icons"
+import { EditOutlined, PrinterOutlined } from "@ant-design/icons"
 import { defaultTheme } from "@/styles/themes"
 import moment from "moment"
 import ConditionalComponent from "@/components/ConditionalComponent"
 import { useGetRepairOrderHistoryMutation } from "@/services/hooks/repairs/useGetRepairOrderHistoryMutation"
 import { truncateText } from "@/helpers/truncateText"
+import { useGetReceiptMutation } from "@/services/hooks/repairs/useGetReceiptMutation"
+import errorHandler from "@/helpers/errorHandler"
+import { generateReceiptsPdf } from "@/helpers/report-helpers"
 
 const statusMap: Record<string, string> = {
   P: "Pendiente",
@@ -72,6 +77,8 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
       metadata: { pagination },
     },
   } = useGetRepairOrderHistoryMutation()
+  const { mutateAsync: getReceipt, isPending: isGetReceiptPending } =
+    useGetReceiptMutation()
 
   useEffect(() => {
     if (!open) setRepairOrder({} as RepairOrder)
@@ -101,6 +108,16 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
 
   useEffect(handleGetHistory, [handleGetHistory])
 
+  const handleDownloadReceipt = async () => {
+    try {
+      const response = await getReceipt(repairOrder.repair_order_id)
+
+      await generateReceiptsPdf([response])
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
   const generalInfo: DescriptionsProps["items"] = [
     {
       key: "repair_order_id",
@@ -110,8 +127,20 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
     {
       key: "status",
       label: "Estatus",
-      span: 2,
       children: statusMap[repairOrder.status],
+    },
+    {
+      key: "status",
+      label: "Estatus",
+      children: (
+        <CustomButton
+          type={"link"}
+          icon={<PrinterOutlined />}
+          onClick={handleDownloadReceipt}
+        >
+          Reimprimir recibo
+        </CustomButton>
+      ),
     },
     {
       key: "reported_issue",
@@ -259,20 +288,25 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
           </CustomText>
         </p>
         <ConditionalComponent
-          condition={item.new_status !== item.previous_status}
+          condition
+          // condition={item.new_status !== item.previous_status}
           fallback={<CustomText>Creo la orden de reparación</CustomText>}
         >
           <p>
-            <p>
-              Cambio el estado de{" "}
-              <CustomText underline type={"danger"}>
-                {statusMap[item.previous_status]}.
-              </CustomText>{" "}
-              a{" "}
-              <CustomText underline type={"success"}>
-                {statusMap[item.new_status]}
-              </CustomText>
-            </p>
+            <ConditionalComponent
+              condition={item.new_status !== item.previous_status}
+            >
+              <p>
+                Cambio el estado de{" "}
+                <CustomText underline type={"danger"}>
+                  {statusMap[item.previous_status]}.
+                </CustomText>{" "}
+                a{" "}
+                <CustomText underline type={"success"}>
+                  {statusMap[item.new_status]}
+                </CustomText>
+              </p>
+            </ConditionalComponent>
             <p>
               <CustomText type={"secondary"}>
                 {truncateText(item.comment, 150)}
@@ -336,21 +370,23 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
         </CustomTitle>
       }
     >
-      <CustomForm form={form}>
-        <CustomRow justify={"start"}>
-          <CustomCol xs={24}>
-            <CustomCollapse
-              defaultActiveKey={[
-                "general_info",
-                "customer_info",
-                "device_info",
-                "history",
-              ]}
-              items={items}
-            />
-          </CustomCol>
-        </CustomRow>
-      </CustomForm>
+      <CustomSpin spinning={isGetHistoryPending || isGetReceiptPending}>
+        <CustomForm form={form}>
+          <CustomRow justify={"start"}>
+            <CustomCol xs={24}>
+              <CustomCollapse
+                defaultActiveKey={[
+                  "general_info",
+                  "customer_info",
+                  "device_info",
+                  "history",
+                ]}
+                items={items}
+              />
+            </CustomCol>
+          </CustomRow>
+        </CustomForm>
+      </CustomSpin>
     </CustomDrawer>
   )
 }

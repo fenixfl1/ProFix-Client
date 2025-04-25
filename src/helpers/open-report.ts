@@ -11,6 +11,9 @@ export async function openReport(
     const blob = new Blob([byteArray], { type: "application/pdf" })
 
     const pdfUrl = URL.createObjectURL(blob)
+
+    if (typeof window === "undefined") return
+
     const newWindow = window.open(pdfUrl)
     if (newWindow) {
       newWindow.document.title = rp_name

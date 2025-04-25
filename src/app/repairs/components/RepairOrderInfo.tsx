@@ -130,8 +130,8 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
       children: statusMap[repairOrder.status],
     },
     {
-      key: "status",
-      label: "Estatus",
+      key: "print",
+      label: "Recibo",
       children: (
         <CustomButton
           type={"link"}
@@ -229,7 +229,7 @@ const RepairOrderInfo: React.FC<RepairOrderInfoProps> = ({
     },
     {
       key: "signed_staff_name",
-      label: "Empleado Asignado",
+      label: "Técnico Asignado",
       children: repairOrder.signed_staff_name,
     },
   ]

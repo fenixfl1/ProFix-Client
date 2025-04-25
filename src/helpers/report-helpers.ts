@@ -7,6 +7,7 @@ import { getSessionInfo } from "@/lib/session"
 import formatter from "./formatter"
 import moment from "moment"
 import { Receipt } from "@/interfaces/repair"
+import { isValidDate } from "./date-helpers"
 
 export interface ExportProps<T> {
   data: T[]
@@ -118,17 +119,43 @@ export async function exportToPDF<T = any>({
     format: "a4",
   })
 
-  const currentDate = new Date().toLocaleDateString("es-ES")
+  const currentDate = new Date().toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  })
 
-  doc.setFontSize(14)
+  const empresa = {
+    name: "Genao Tech",
+    address: "Av. Principal 123, Santo Domingo",
+    rnc: "RNC: 1-01-12345-6",
+    phone: "Tel: (809) 123-4567",
+  }
+
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
-  const titleWidth = doc.getTextWidth(title)
-  doc.text(title, (pageWidth - titleWidth) / 2, 15)
 
+  // Título grande centrado
+  doc.setFontSize(16)
+  doc.setFont("helvetica", "bold")
+  const titleWidth = doc.getTextWidth(title)
+  doc.text(title, (pageWidth - titleWidth) / 2, 20)
+
+  // Información de empresa a la izquierda
   doc.setFontSize(10)
-  doc.text(`Generado por: ${getSessionInfo().name}`, 10, 30)
+  doc.setFont("helvetica", "normal")
+  doc.text(empresa.name, 10, 30)
+  doc.text(empresa.address, 10, 35)
+  doc.text(empresa.rnc, 10, 40)
+  doc.text(empresa.phone, 10, 45)
+
+  // Fecha actual alineada a la derecha
   doc.text(`Fecha: ${currentDate}`, pageWidth - 50, 30)
+
+  // Línea separadora
+  doc.setDrawColor(0)
+  doc.setLineWidth(0.5)
+  doc.line(10, 50, pageWidth - 10, 50)
 
   if (data.length === 0) {
     doc.text("No hay datos disponibles", 14, 25)
@@ -143,7 +170,7 @@ export async function exportToPDF<T = any>({
   const body = data.map((row) =>
     (columnsMap ? Object.keys(columnsMap) : Object.keys(row ?? {})).map(
       (key) =>
-        moment(row[key as never]).isValid()
+        isValidDate(row[key as never])
           ? formatter({
               value: row[key as never],
               format: "long_date",
@@ -157,15 +184,16 @@ export async function exportToPDF<T = any>({
   autoTable(doc, {
     head: [headers as string[]],
     body,
-    startY: 25,
+    startY: 55,
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 10, right: 10 },
     theme: "striped",
     showHead,
-    didDrawPage: () => {
+    didDrawPage: (data) => {
+      const pageCurrent = data.pageNumber
       doc.setFontSize(8)
       doc.text(footerText, 10, pageHeight - 10)
-      doc.text(`Página ${1}`, pageWidth - 20, pageHeight - 10)
+      doc.text(`Página ${pageCurrent}`, pageWidth - 20, pageHeight - 10)
     },
   })
 
@@ -192,10 +220,7 @@ export async function exportToCSV<T = any>({
       .map((key) => {
         let value = row[key as never] as string
 
-        if (
-          typeof value === "string" &&
-          value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
-        ) {
+        if (isValidDate(value)) {
           value = new Date(value).toLocaleDateString()
         }
 
@@ -220,38 +245,45 @@ export async function exportToCSV<T = any>({
 }
 
 export async function generateReceiptsPdf(receipts: Receipt[]) {
-  const pdf = new jsPDF("p", "pt", "a4")
+  const pdf = new jsPDF("p", "mm", "a4")
 
   for (let i = 0; i < receipts.length; i++) {
-    // Crear un contenedor temporal
+    // Crear un contenedor invisible para renderizar el recibo
     const wrapper = document.createElement("div")
-    wrapper.innerHTML = receipts[i].content
-    wrapper.style.width = "100mm" // Tamaño A4
-    wrapper.style.padding = "170mm"
-    wrapper.style.padding = "10mm"
+    wrapper.style.width = "90mm" // Ajuste a 80mm de ancho (común en impresoras térmicas)
+    wrapper.style.padding = "5mm" // Espaciado interno
     wrapper.style.boxSizing = "border-box"
     wrapper.style.backgroundColor = "white"
     wrapper.style.color = "black"
-    wrapper.style.fontSize = "12px"
+    wrapper.style.fontSize = "10px"
     wrapper.style.fontFamily = "Arial, sans-serif"
+    wrapper.style.position = "absolute"
+    wrapper.style.top = "-9999px" // Ocultar fuera del viewport
+    wrapper.style.left = "-9999px"
+    wrapper.innerHTML = receipts[i].content
 
     document.body.appendChild(wrapper)
 
-    // Convertir a imagen
+    // Usar html2canvas para capturar el contenido del recibo
     const canvas = await html2canvas(wrapper, {
-      scale: 2,
+      scale: 2, // Aumentar la escala para mayor resolución
+      useCORS: true, // Asegurar que las imágenes externas se carguen correctamente
     })
-    const imgData = canvas.toDataURL("image/png")
 
+    const imgData = canvas.toDataURL("image/png")
     const imgProps = pdf.getImageProperties(imgData)
-    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfWidth = 80 // 80mm de ancho (tamaño de recibo estándar)
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
 
-    if (i > 0) pdf.addPage()
+    if (i > 0) pdf.addPage() // Añadir nueva página para el siguiente recibo
+
+    // Añadir la imagen al PDF
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight)
 
+    // Eliminar el contenedor invisible del DOM
     document.body.removeChild(wrapper)
   }
 
+  // Guardar el PDF generado
   pdf.save("recibos.pdf")
 }

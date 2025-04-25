@@ -9,6 +9,7 @@ import {
 } from "@/components/custom"
 import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
 import formatter from "@/helpers/formatter"
+import makePagination from "@/helpers/pagination"
 import { Customer } from "@/interfaces/customer"
 import { useCustomerStore } from "@/stores/customer.store"
 import { DeleteOutlined, EditOutlined, StopOutlined } from "@ant-design/icons"
@@ -26,10 +27,7 @@ const CustomerTable: React.FC<CustomerTablesProps> = ({
   onEdit,
   onUpdate,
 }) => {
-  const {
-    customers,
-    metadata: { pagination },
-  } = useCustomerStore()
+  const { customers, metadata } = useCustomerStore()
 
   const handleOnUpdate = (record: Customer) => {
     CustomModalConfirmation({
@@ -113,17 +111,27 @@ const CustomerTable: React.FC<CustomerTablesProps> = ({
     },
   ]
 
+  const columnsMap = {
+    customer_id: "ID",
+    name: "Nombre",
+    identity_document: "Documento Identidad",
+    phone: "Teléfono",
+    email: "Correo",
+    username: "Usuario",
+    address: "Dirección",
+    created_at: "Fecha de registro",
+    state: "Estado",
+  }
+
   return (
     <CustomCol xs={24}>
       <CustomTable
         columns={columns}
+        exportable
         onChange={({ current, pageSize }) => onChange(current, pageSize)}
         dataSource={customers}
-        pagination={{
-          pageSize: pagination.pageSize,
-          total: pagination.totalRows,
-          current: pagination.currentPage,
-        }}
+        columnsMap={columnsMap}
+        pagination={{ ...makePagination(metadata) }}
       />
     </CustomCol>
   )

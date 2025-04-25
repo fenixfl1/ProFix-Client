@@ -120,13 +120,28 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
     },
   ]
 
+  const columnsMap = {
+    user_id: "ID",
+    name: "Nombre",
+    last_name: "Apellido",
+    identity_document: "Doc. Identidad",
+    phone: "Teléfono",
+    email: "Correo",
+    roles: "Roles",
+    username: "Usuario",
+    created_at: "Fecha de registro",
+    state: "Estado",
+  }
+
   return (
     <CustomSpin spinning={isGetUserInfoLoading}>
       <CustomCol xs={24}>
         <CustomTable
+          exportable
           columns={columns}
           dataSource={users}
           onChange={({ current, pageSize }) => onChange(current, pageSize)}
+          columnsMap={columnsMap}
           pagination={{
             pageSize: pagination.pageSize,
             total: pagination.totalRows,

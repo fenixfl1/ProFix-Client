@@ -35,3 +35,13 @@ interface UserStatistics {
     value: number
   }[]
 }
+
+export interface DashboardData {
+  labels: string[]
+  data: number[]
+}
+
+export interface ChartComponentProps {
+  width?: string | number
+  wrap?: boolean
+}

@@ -5,6 +5,13 @@ interface SessionCookie {
   token: string
 }
 
+export interface CustomerSession {
+  username: string
+  name: string
+  customer_id: number
+  sessionCookie: SessionCookie
+}
+
 interface UserSession {
   username: string
   user_id: number

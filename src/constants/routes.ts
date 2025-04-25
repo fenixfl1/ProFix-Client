@@ -3,6 +3,8 @@ export const SOCKET_NOTIFICATION_URL = `${BASE_WEB_SOCKET_URL}notifications`
 
 export const BASE_WEB_API_URL = process.env.NEXT_PUBLIC_APP_WEB_API_URL
 export const WEB_API_PATH_LOGIN = "login"
+export const WEB_API_PATH_REQUEST_RESET_PASSWORD = "/request_password_reset"
+export const WEB_API_PATH_RESET_PASSWORD = "/reset_password"
 
 export const WEB_API_PATH_GET_STAFF_MENU_OPTIONS =
   "menu_options/get_menu_options/"
@@ -27,6 +29,10 @@ export const WEB_API_PATH_CREATE_CUSTOMER = "/customers/create_customer"
 export const WEB_API_PATH_UPDATE_CUSTOMER = "/customers/update_customer"
 export const WEB_API_PATH_GET_CUSTOMERS = "/customers/get_customers"
 export const WEB_API_PATH_GET_ONE_CUSTOMER = "/customers/get_customer"
+// customer tracking
+export const WEB_API_PATH_LOGIN_CUSTOMER = "/customers/login_customer"
+export const WEB_API_PATH_GET_CUSTOMER_TRACKING_ORDER =
+  "/tracking/get_customer_tracking_order"
 
 // repair_order
 export const WEB_API_PATH_CREATE_REPAIR_ORDER =
@@ -53,6 +59,20 @@ export const WEB_API_PATH_CREATE_PRODUCT_DETAIL =
 export const WEB_API_PATH_UPDATE_PRODUCT_DETAIL =
   "/products/update_product_detail"
 
+// dashboard
+export const WEB_API_PATH_GET_REPAIR_ORDERS_BY_STATUS =
+  "/get_repair_orders_by_status"
+export const WEB_API_PATH_GET_REPAIR_ORDERS_BY_MONTH =
+  "/get_repair_orders_by_month"
+export const WEB_API_PATH_GET_MONTHLY_INCOME = "/get_monthly_income"
+export const WEB_API_PATH_GET_MOST_COMMON_DEVICES = "/get_most_common_devices"
+export const WEB_API_PATH_GET_NEW_CUSTOMER_PER_MONTH =
+  "/get_new_customer_per_month"
+export const WEB_API_PATH_GET_AVERAGE_REPAIR_TIME_DAYS =
+  "/get_average_repair_time_days"
+export const WEB_API_PATH_GET_RECURRENT_CUSTOMERS_VS_NEW_CUSTOMERS =
+  "/get_recurrent_customers_vs_new_customers"
+
 // internal routes
 export const PATH_LOGIN = "/login"
 export const PATH_HOME = "/"
@@ -62,6 +82,18 @@ export const PATH_INVENTORY = "/inventory"
 export const PATH_ROLES = "/roles"
 export const PATH_CUSTOMERS = "/customers"
 export const PATH_RECEPTION = "/repairs"
+export const PATH_CUSTOMER_LOGIN = "/tracking/login"
+export const PATH_TRACKING = "/tracking"
+export const PATH_TRACK_HISTORY = "/tracking/history/"
+export const PATH_REQUEST_RESET_PASSWORD = "/reset_password"
+export const PATH_RESET_PASSWORD = "/reset_password/[slug]"
+
+export const allowedClientRoutes = [
+  PATH_HOME,
+  PATH_TRACKING,
+  PATH_TRACK_HISTORY,
+  PATH_CUSTOMER_LOGIN,
+]
 
 export const protectedRoutes = [
   PATH_HOME,
@@ -73,4 +105,8 @@ export const protectedRoutes = [
   PATH_RECEPTION,
 ]
 
-export const publicRoutes = [PATH_LOGIN]
+export const publicRoutes = [
+  PATH_LOGIN,
+  PATH_REQUEST_RESET_PASSWORD,
+  PATH_RESET_PASSWORD,
+]

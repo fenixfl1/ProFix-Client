@@ -220,7 +220,7 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
       content: "¿Estás seguro que deseas cerrar sesión?",
       onOk: async () => {
         removeSession()
-        window.location.reload()
+        if (typeof window !== "undefined") window.location.reload()
       },
     })
   }
@@ -350,11 +350,11 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
                 >
                   {getSelectedOption()?.description}
                 </span>
-                <CustomTooltip title="Notificaciones">
-                  <IconContainer>
-                    <BellOutlined />
-                  </IconContainer>
-                </CustomTooltip>
+
+                <Darkreader
+                  defaultDarken={isDarkMode}
+                  onChange={setIsDarkMode}
+                />
               </HeaderContainer>
             </CustomHeader>
             <Content>
@@ -369,12 +369,6 @@ const Template: React.FC<React.PropsWithChildren> = ({ children }) => {
                   </CustomSpin>
                 </MotionComponent>
               </CustomContentContainer>
-              <FloatButton>
-                <Darkreader
-                  defaultDarken={isDarkMode}
-                  onChange={setIsDarkMode}
-                />
-              </FloatButton>
             </Content>
           </ContentLayout>
         </CustomLayout>

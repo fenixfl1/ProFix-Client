@@ -1,5 +1,5 @@
 import Cookies from "js-cookie"
-import { MenuOption, UserSession } from "@/interfaces/user"
+import { CustomerSession, MenuOption, UserSession } from "@/interfaces/user"
 import {
   COOKIE_KEY_CURRENT_MENU_OPTION,
   COOKIE_KEY_SESSION_TOKEN,
@@ -8,6 +8,9 @@ import {
   COOKIE_KEY_USER_PICTURE,
   COOKIE_KEY_AVATAR,
   COOKIE_KEY_DARK_MODE,
+  COOKIE_KEY_CUSTOMER_DATA,
+  COOKIE_KEY_CUSTOMER_SESSION_TOKEN,
+  COOKIE_KEY_CUSTOMER_USERNAME,
 } from "@/constants/cookieKeys"
 import jsonParse from "@/helpers/jsonParse"
 import errorHandler from "@/helpers/errorHandler"
@@ -19,6 +22,12 @@ const sessionCookies: Record<string, string> = {
   COOKIE_KEY_USER_PICTURE,
   COOKIE_KEY_CURRENT_MENU_OPTION,
   COOKIE_KEY_AVATAR,
+}
+
+const customerSessionCookies: Record<string, string> = {
+  COOKIE_KEY_CUSTOMER_DATA,
+  COOKIE_KEY_CUSTOMER_USERNAME,
+  COOKIE_KEY_CUSTOMER_SESSION_TOKEN,
 }
 
 const isLoggedIn = (): boolean => {
@@ -62,7 +71,11 @@ const removeSession = (): void => {
 }
 
 const getSessionToken = (): string => {
-  return Cookies.get(sessionCookies.COOKIE_KEY_SESSION_TOKEN) || ""
+  return (
+    Cookies.get(sessionCookies.COOKIE_KEY_SESSION_TOKEN) ||
+    Cookies.get(COOKIE_KEY_CUSTOMER_SESSION_TOKEN) ||
+    ""
+  )
 }
 
 const getSessionInfo = (): UserSession => {
@@ -119,6 +132,43 @@ export const setDarkMode = (value: boolean) => {
 
 export const getDarkMode = (): boolean => {
   return Cookies.get(COOKIE_KEY_DARK_MODE) === "true"
+}
+
+export const createCustomerSession = (session: CustomerSession): void => {
+  const { sessionCookie, ...customer } = session
+  const { expiration, token } = sessionCookie
+
+  Cookies.set(COOKIE_KEY_CUSTOMER_DATA, JSON.stringify(customer), {
+    expires: new Date(expiration),
+  })
+
+  Cookies.set(COOKIE_KEY_CUSTOMER_SESSION_TOKEN, token, {
+    expires: new Date(expiration),
+  })
+
+  Cookies.set(COOKIE_KEY_CUSTOMER_USERNAME, customer.username, {
+    expires: new Date(expiration),
+  })
+}
+
+export const removeCustomerSession = (): void => {
+  Object.keys(customerSessionCookies).forEach((key) => {
+    Cookies.remove(customerSessionCookies[key])
+  })
+  sessionStorage.clear()
+}
+
+export const getCustomerSession = (): Omit<
+  CustomerSession,
+  "sessionCookie"
+> => {
+  return jsonParse<CustomerSession>(
+    Cookies.get(COOKIE_KEY_CUSTOMER_DATA) as string
+  )
+}
+
+export const isCustomerLoggedIn = (): boolean => {
+  return !Cookies.get(COOKIE_KEY_CUSTOMER_SESSION_TOKEN)
 }
 
 export {

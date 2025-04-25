@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3003",
+    "dev": "next dev -H admin.profix.com -p 3003",
     "build": "next build",
-    "start": "next start -p 3003",
+    "start": "next start -H admin.profix.com -p 3003",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,9 +17,10 @@
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
     "@tanstack/react-query": "^5.51.15",
-    "antd": "^5.19.3",
+    "antd": "^5.24.6",
     "axios": "^1.7.2",
     "chart.js": "^4.4.4",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "darkreader": "^4.9.95",

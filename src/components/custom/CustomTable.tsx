@@ -37,7 +37,7 @@ const CustomTable = React.forwardRef<any, CustomTableProps<any>>(
       dataSource = [],
       expandable,
       bordered = false,
-      exportable = true,
+      exportable = false,
       columnsMap,
       ...props
     },

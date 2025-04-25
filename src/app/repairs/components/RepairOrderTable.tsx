@@ -297,6 +297,7 @@ const RepairOrderTable: React.FC = () => {
         />
         <CustomCol xs={24}>
           <CustomTable
+            exportable
             dataSource={repairOrders}
             columns={columns}
             columnsMap={columnsMap}

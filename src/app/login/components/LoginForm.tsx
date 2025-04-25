@@ -16,10 +16,12 @@ import {
   CustomRow,
 } from "@/components/custom"
 import TextLogo from "@/components/TextLogo"
+import { PATH_REQUEST_RESET_PASSWORD } from "@/constants/routes"
 import { formItemLayout } from "@/styles/breakpoints"
 import { LoginOutlined } from "@ant-design/icons"
 import { FormInstance } from "antd/lib"
 import { NextPage } from "next"
+import { useRouter } from "next/navigation"
 import React from "react"
 import styled from "styled-components"
 
@@ -34,6 +36,8 @@ const Layout = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 20px;
 `
 
 const LoginLogoContainer = styled.div`
@@ -72,6 +76,8 @@ const LoginForm: NextPage<LoginFormProps> = ({
   message,
   onClose,
 }) => {
+  const router = useRouter()
+
   return (
     <Layout>
       <CustomCard width={"25rem"}>
@@ -115,26 +121,11 @@ const LoginForm: NextPage<LoginFormProps> = ({
               </CustomFormItem>
             </CustomCol>
 
-            <CustomCol span={24}>
-              <CustomRow justify={"space-between"}>
-                <CustomFormItem name={"remember"} valuePropName="checked">
-                  <CustomCheckbox>Recordarme</CustomCheckbox>
-                </CustomFormItem>
-
-                <ConditionalComponent condition={false} fallback={<div />}>
-                  <CustomFormItem>
-                    <CustomButton type={"link"}>
-                      Olvide mi contraseña
-                    </CustomButton>
-                  </CustomFormItem>
-                </ConditionalComponent>
-              </CustomRow>
-            </CustomCol>
-
-            <div style={{ margin: "35px 0" }} />
+            <div style={{ margin: "50px 0" }} />
 
             <CustomCol span={24}>
               <CustomButton
+                size={"middle"}
                 block
                 icon={<LoginOutlined />}
                 onClick={onFinish}
@@ -145,6 +136,16 @@ const LoginForm: NextPage<LoginFormProps> = ({
             </CustomCol>
           </CustomRow>
         </CustomForm>
+      </CustomCard>
+
+      <CustomCard width={"25rem"}>
+        <CustomButton
+          block
+          type={"link"}
+          onClick={() => router.push(PATH_REQUEST_RESET_PASSWORD)}
+        >
+          ¿Olvidaste tu contraseña?
+        </CustomButton>
       </CustomCard>
     </Layout>
   )

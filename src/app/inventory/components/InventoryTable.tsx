@@ -322,6 +322,21 @@ const InventoryTable: React.FC = () => {
     </CustomRow>
   )
 
+  const columnsMap = {
+    product_id: "Código",
+    name: "Nombre",
+    category_name: "Categoría",
+    description: "Descripción",
+    supplier: "Suplidor",
+    model: "Modelo",
+    brand: "Marca",
+    price: "Precio",
+    stock: "Stock",
+    condition: "Condición",
+    created_at: "Fecha de creación",
+    state: "Estado",
+  }
+
   return (
     <>
       <CustomSpin spinning={isGetProductPending || isUpdateProductPending}>
@@ -338,8 +353,10 @@ const InventoryTable: React.FC = () => {
 
         <CustomCol xs={24}>
           <CustomTable
+            exportable
             dataSource={products}
             columns={columns}
+            columnsMap={columnsMap}
             onChange={({ current, pageSize }) =>
               handleSearch(current, pageSize)
             }

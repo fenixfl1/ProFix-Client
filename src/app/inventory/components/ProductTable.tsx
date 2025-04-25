@@ -246,6 +246,16 @@ const ProductTable: React.FC = () => {
     </CustomRow>
   )
 
+  const columnsMap = {
+    product_id: "Código",
+    name: "Nombre",
+    category: "Categoría",
+    description: "Descripción",
+    created_at: "Fecha de creación",
+    updated_at: "Última actualización",
+    state: "Estado",
+  }
+
   return (
     <>
       <CustomSpin spinning={isGetProductPending || isUpdatePending}>
@@ -262,8 +272,10 @@ const ProductTable: React.FC = () => {
 
         <CustomCol xs={24}>
           <CustomTable
+            exportable
             dataSource={productsHeaders}
             columns={columns}
+            columnsMap={columnsMap}
             onChange={({ current, pageSize }) =>
               handleSearch(current, pageSize)
             }

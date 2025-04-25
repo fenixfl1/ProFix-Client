@@ -1,5 +1,10 @@
 import React from "react"
-import RepairOrderTable from "./components/RepairOrderTable"
+import dynamic from "next/dynamic"
+
+const RepairOrderTable = dynamic(
+  () => import("./components/RepairOrderTable"),
+  { ssr: false }
+)
 
 const page: React.FC = () => {
   return <RepairOrderTable />

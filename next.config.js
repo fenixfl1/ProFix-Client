@@ -6,6 +6,7 @@ const withTM = require("next-transpile-modules")([
   "rc-picker",
   "rc-tree",
   "rc-table",
+  "rc-input",
 ])
 
 const nextConfig = {

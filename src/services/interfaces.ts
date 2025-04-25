@@ -47,6 +47,7 @@ export interface GetPayload<T = any> {
   condition: AdvancedCondition<T>[]
   page: number
   size: number
+  [key: string]: unknown
 }
 
 export interface ApiResponse<T> {

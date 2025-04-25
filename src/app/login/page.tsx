@@ -21,7 +21,7 @@ const page: NextPage = () => {
     try {
       const data = await form.validateFields()
       await authenticateUser(data)
-      window.location.reload()
+      if (typeof window !== "undefined") window.location.reload()
     } catch (error: any) {
       assert<AxiosError<{ message: string }>>(error)
       setMessage(error?.response?.data?.message)

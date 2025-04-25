@@ -70,6 +70,29 @@ export interface RepairOrder {
   history: RepairOrderHistory[]
 }
 
+export interface TrackingRepairOrder {
+  repair_order_id: number
+  state: string
+  diagnosis: string
+  customer_id: number
+  delivery_date: string
+  status: string
+  estimated_cost: string
+  reported_issue: string
+  advanced_payment: number
+  created_at: string
+  name: string
+  phone: string
+  identity_document: string
+  email: string | null
+  customer_address: string | null
+  model: string
+  color: string
+  imei: string
+  physical_condition: string
+  brand: string
+}
+
 export interface RepairOrderHistory {
   history_id: number
   repair_order_id: number

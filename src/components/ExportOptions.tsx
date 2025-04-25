@@ -195,17 +195,19 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({
             </CustomFormItem>
           </CustomCol>
           <CustomCol {...defaultBreakpoints}>
-            <CustomFormItem label={" "} colon={false}>
-              <CustomPopover content={columnContent}>
-                <CustomButton
-                  type={"text"}
-                  size={"large"}
-                  icon={<TableOutlined />}
-                >
-                  Columnas
-                </CustomButton>
-              </CustomPopover>
-            </CustomFormItem>
+            <ConditionalComponent condition={!!Object.keys(columnsMap).length}>
+              <CustomFormItem label={" "} colon={false}>
+                <CustomPopover content={columnContent}>
+                  <CustomButton
+                    type={"text"}
+                    size={"large"}
+                    icon={<TableOutlined />}
+                  >
+                    Columnas
+                  </CustomButton>
+                </CustomPopover>
+              </CustomFormItem>
+            </ConditionalComponent>
           </CustomCol>
           <CustomCol {...defaultBreakpoints}>
             <CustomFormItem

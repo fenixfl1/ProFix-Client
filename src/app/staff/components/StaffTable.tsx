@@ -21,6 +21,10 @@ import formatter from "@/helpers/formatter"
 import { DeleteOutlined, EditOutlined, UserOutlined } from "@ant-design/icons"
 import { useGetUserInfoMutation } from "@/services/hooks/staff/useGetUserInfoMutation"
 import useDrawerStore from "@/stores/drawerStore"
+import errorHandler from "@/helpers/errorHandler"
+import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
+import { useUpdateStaffMutation } from "@/services/hooks/staff/useUpdateStaffMutation"
+import { customNotification } from "@/components/custom/customNotification"
 
 interface StaffTableProps {
   onChange: (current?: number, size?: number) => void
@@ -36,6 +40,34 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
 
   const { mutateAsync: getUserInfo, isPending: isGetUserInfoLoading } =
     useGetUserInfoMutation()
+  const { mutateAsync: updateStaff, isPending: isUpdatePending } =
+    useUpdateStaffMutation()
+
+  const handleUpdate = (record: User) => {
+    CustomModalConfirmation({
+      type: "confirm",
+      title: "confirmación",
+      content: `¿Desea ${record.state === "A" ? "inhabilitar" : "Habilitar"} al usuario ${record.name}?`,
+      onOk: async () => {
+        try {
+          updateStaff({
+            user_id: record.user_id,
+            username: record.username,
+            state: record.state === "A" ? "I" : "A",
+          })
+
+          customNotification({
+            message: "Operación exitosa",
+            type: "success",
+          })
+
+          onChange?.()
+        } catch (error) {
+          errorHandler(error)
+        }
+      },
+    })
+  }
 
   const columns: ColumnType<User>[] = [
     {
@@ -113,7 +145,12 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
             />
           </CustomTooltip>
           <CustomTooltip title={"Inhabilitar"}>
-            <CustomButton danger type={"link"} icon={<DeleteOutlined />} />
+            <CustomButton
+              onClick={() => handleUpdate(record)}
+              danger
+              type={"link"}
+              icon={<DeleteOutlined />}
+            />
           </CustomTooltip>
         </CustomSpace>
       ),
@@ -134,7 +171,7 @@ const StaffTable: React.FC<StaffTableProps> = ({ onChange, onEdit }) => {
   }
 
   return (
-    <CustomSpin spinning={isGetUserInfoLoading}>
+    <CustomSpin spinning={isGetUserInfoLoading || isUpdatePending}>
       <CustomCol xs={24}>
         <CustomTable
           exportable

@@ -34,6 +34,7 @@ import RepairOrderForm from "./RepairOrderForm"
 import { AdvancedCondition } from "@/services/interfaces"
 import { useUpdateRepairOrderMutation } from "@/services/hooks/repairs/useUpdateRepairOrderMutation"
 import { customNotification } from "@/components/custom/customNotification"
+import { CustomModalConfirmation } from "@/components/custom/CustomModalMethods"
 
 const statusMap: Record<string, string> = {
   P: "Pendiente",
@@ -124,28 +125,30 @@ const RepairOrderTable: React.FC = () => {
   const toggleFormModal = () => setFormModalState((prev) => !prev)
 
   const handleOnUpdate = async (record: RepairOrder) => {
-    try {
-      await updateRepairOrder({
-        repair_order_id: record.repair_order_id,
-        state: record.state === "A" ? "I" : "A",
-      })
+    CustomModalConfirmation({
+      title: "¿Estás seguro de que deseas elimina esta orden de reparación?",
+      content:
+        "Si eliminas esta orden de reparación, no podrás recuperarla. ¿Estás seguro?",
+      onOk: async () => {
+        try {
+          await updateRepairOrder({
+            repair_order_id: record.repair_order_id,
+            state: "I",
+          })
 
-      customNotification({
-        message: "Operación exitosa",
-        description: `Orden de reparación ${record.state === "A" ? "Archivada" : "Activada"} con exitosamente.`,
-        type: "success",
-      })
+          customNotification({
+            message: "Operación exitosa",
+            description: `Orden de reparación ${record.state === "A" ? "Archivada" : "Activada"} con exitosamente.`,
+            type: "success",
+          })
 
-      setShouldUpdate(!shouldUpdate)
-    } catch (error) {
-      errorHandler(error)
-    }
+          setShouldUpdate(!shouldUpdate)
+        } catch (error) {
+          errorHandler(error)
+        }
+      },
+    })
   }
-
-  React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log({ ...makePagination(metadata), metadata })
-  }, [metadata])
 
   const columnsMap = {
     repair_order_id: "Código",

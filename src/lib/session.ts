@@ -40,9 +40,6 @@ const createSession = (data: UserSession): void => {
 
     const { token, expiration: expires } = sessionCookie
 
-    // eslint-disable-next-line no-console
-    console.log({ avatar })
-
     sessionStorage.setItem("avatar", `${avatar || ""}`)
     Cookies.set(sessionCookies.COOKIE_KEY_USERNAME, username, {
       expires: new Date(expires),

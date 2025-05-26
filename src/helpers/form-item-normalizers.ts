@@ -1,8 +1,6 @@
 import { CheckboxChangeEvent } from "antd/lib/checkbox"
 
 export const normalizeFiles = (file: any) => {
-  // eslint-disable-next-line no-console
-  console.log({ file })
   if (Array.isArray(file)) {
     return file
   }

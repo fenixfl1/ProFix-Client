@@ -22,12 +22,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     )
 
     ws.onopen = () => {
-      console.log("Connected")
+      // console.info("Connected")
     }
 
     ws.onclose = (e) => {
       // eslint-disable-next-line no-console
-      console.log({ code: e.code })
+      // console.info({ code: e.code })
     }
 
     setSocket(ws)

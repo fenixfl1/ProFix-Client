@@ -33,6 +33,7 @@ const page: React.FC = () => {
 
   const {
     metadata: { pagination },
+    setRole,
   } = useRolesStore()
 
   const { currentPage, pageSize } = pagination
@@ -111,6 +112,8 @@ const page: React.FC = () => {
           open={formModalState}
           onCancel={() => {
             setShouldUpdate((prev) => !prev)
+            form.resetFields()
+            setRole({} as Roles)
             toggleFormModal()
           }}
         />

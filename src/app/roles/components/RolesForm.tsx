@@ -130,7 +130,7 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
       <CustomSpin spinning={isCreatePending || isUpdatePending}>
         <CustomForm form={form} {...formItemLayout}>
           <CustomRow justify={"end"}>
-            <ConditionalComponent condition>
+            <ConditionalComponent condition={!!role?.role_id}>
               <CustomCol xs={8}>
                 <CustomFormItem
                   label={"Código"}
@@ -143,7 +143,8 @@ const RolesForm: React.FC<RolesFormProps> = ({ form, open, onCancel }) => {
             </ConditionalComponent>
             <CustomCol xs={24}>
               <CustomFormItem
-                name="name"
+                label={"Nombre"}
+                name={"name"}
                 rules={[{ required: true }]}
                 {...labelColFullWidth}
               >
